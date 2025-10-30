@@ -17,7 +17,7 @@ O sistema deve controlar semáforos de dois tipos: pedestres e carros, incluindo
 - Contém dois LEDs: verde e vermelho.
 - Comportamento:
   - Verde acende por 4 segundos.
-  - Vermelho acende por 2 segundos.
+  - Vermelho acende por 4 segundos.
 - Controle deve ser feito por **duas threads independentes**, garantindo exclusão mútua (**mutex**) entre verde e vermelho.
 - Deve ser utilizado o microcontrolador de um integrante.
 
