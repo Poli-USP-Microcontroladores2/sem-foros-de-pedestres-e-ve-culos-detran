@@ -1,0 +1,69 @@
+{
+  "C_Cpp_Runner.cCompilerPath": "C:/Users/Operador/.platformio/packages/toolchain-gccarmnoneeabi/bin/arm-none-eabi-gcc.exe",
+  "C_Cpp_Runner.cppCompilerPath": "C:/Users/Operador/.platformio/packages/toolchain-g++armnoneeabi/bin/arm-none-eabi-gcc.exe",
+  "C_Cpp_Runner.debuggerPath": "C:/Users/Operador/.platformio/packages/toolchain-gdbarmnoneeabi/bin/arm-none-eabi-gcc.exe",
+  "C_Cpp_Runner.cStandard": "c99",
+  "C_Cpp_Runner.cppStandard": "",
+  "C_Cpp_Runner.msvcBatchPath": "C:/Program Files/Microsoft Visual Studio/VR_NR/Community/VC/Auxiliary/Build/vcvarsall.bat",
+  "C_Cpp_Runner.useMsvc": false,
+  "C_Cpp_Runner.warnings": [
+    "-Wall",
+    "-Wextra",
+    "-Wpedantic",
+    "-Wshadow",
+    "-Wformat=2",
+    "-Wcast-align",
+    "-Wconversion",
+    "-Wsign-conversion",
+    "-Wnull-dereference"
+  ],
+  "C_Cpp_Runner.msvcWarnings": [
+    "/W4",
+    "/permissive-",
+    "/w14242",
+    "/w14287",
+    "/w14296",
+    "/w14311",
+    "/w14826",
+    "/w44062",
+    "/w44242",
+    "/w14905",
+    "/w14906",
+    "/w14263",
+    "/w44265",
+    "/w14928"
+  ],
+  "C_Cpp_Runner.enableWarnings": true,
+  "C_Cpp_Runner.warningsAsError": false,
+  "C_Cpp_Runner.compilerArgs": [],
+  "C_Cpp_Runner.linkerArgs": [],
+  "C_Cpp_Runner.includePaths": [
+    "C:/Users/Operador/Documents/PlatformIO/Projects/251030-152500-zephyr-blink/include",
+    "C:/Users/Operador/Documents/PlatformIO/Projects/251030-152500-zephyr-blink/src",
+    "C:/Users/Operador/.platformio/packages/framework-zephyr@2.20701.220422/include",
+    "C:/Users/Operador/Documents/PlatformIO/Projects/251030-152500-zephyr-blink/.pio/build/frdm_k64f/zephyr/include/generated",
+    "C:/Users/Operador/.platformio/packages/framework-zephyr@2.20701.220422/soc/arm/nxp_kinetis/k6x",
+    "C:/Users/Operador/.platformio/packages/framework-zephyr@2.20701.220422/_pio/modules/hal/cmsis/CMSIS/Core/Include",
+    "C:/Users/Operador/.platformio/packages/framework-zephyr@2.20701.220422/_pio/modules/hal/nxp/mcux/devices/MK64F12",
+    "C:/Users/Operador/.platformio/packages/framework-zephyr@2.20701.220422/_pio/modules/hal/nxp/mcux/drivers/kinetis",
+    ""
+  ],
+  "C_Cpp_Runner.includeSearch": [
+    "*",
+    "**/*"
+  ],
+  "C_Cpp_Runner.excludeSearch": [
+    "**/build",
+    "**/build/**",
+    "**/.*",
+    "**/.*/**",
+    "**/.vscode",
+    "**/.vscode/**"
+  ],
+  "C_Cpp_Runner.useAddressSanitizer": false,
+  "C_Cpp_Runner.useUndefinedSanitizer": false,
+  "C_Cpp_Runner.useLeakSanitizer": false,
+  "C_Cpp_Runner.showCompilationTime": false,
+  "C_Cpp_Runner.useLinkTimeOptimization": false,
+  "C_Cpp_Runner.msvcSecureNoWarnings": false
+}
