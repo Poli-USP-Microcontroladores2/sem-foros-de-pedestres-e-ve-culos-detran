@@ -31,11 +31,11 @@
             "type": "platformio-debug",
             "request": "launch",
             "name": "PIO Debug",
-            "executable": "C:/Users/Operador/sem-foros-de-pedestres-e-ve-culos-detran/.pio/build/frdm_k64f/firmware.elf",
-            "projectEnvName": "frdm_k64f",
+            "executable": "C:/Users/Operador/sem-foros-de-pedestres-e-ve-culos-detran/.pio/build/frdm_kl25z/firmware.elf",
+            "projectEnvName": "frdm_kl25z",
             "toolchainBinDir": "C:/Users/Operador/.platformio/packages/toolchain-gccarmnoneeabi/bin",
             "internalConsoleOptions": "openOnSessionStart",
-            "svdPath": "C:/Users/Operador/.platformio/platforms/freescalekinetis/misc/svd/MK64F12.svd",
+            "svdPath": "C:/Users/Operador/.platformio/platforms/freescalekinetis/misc/svd/MKL25Z4.svd",
             "preLaunchTask": {
                 "type": "PlatformIO",
                 "task": "Pre-Debug"
@@ -45,21 +45,21 @@
             "type": "platformio-debug",
             "request": "launch",
             "name": "PIO Debug (skip Pre-Debug)",
-            "executable": "C:/Users/Operador/sem-foros-de-pedestres-e-ve-culos-detran/.pio/build/frdm_k64f/firmware.elf",
-            "projectEnvName": "frdm_k64f",
+            "executable": "C:/Users/Operador/sem-foros-de-pedestres-e-ve-culos-detran/.pio/build/frdm_kl25z/firmware.elf",
+            "projectEnvName": "frdm_kl25z",
             "toolchainBinDir": "C:/Users/Operador/.platformio/packages/toolchain-gccarmnoneeabi/bin",
             "internalConsoleOptions": "openOnSessionStart",
-            "svdPath": "C:/Users/Operador/.platformio/platforms/freescalekinetis/misc/svd/MK64F12.svd"
+            "svdPath": "C:/Users/Operador/.platformio/platforms/freescalekinetis/misc/svd/MKL25Z4.svd"
         },
         {
             "type": "platformio-debug",
             "request": "launch",
             "name": "PIO Debug (without uploading)",
-            "executable": "C:/Users/Operador/sem-foros-de-pedestres-e-ve-culos-detran/.pio/build/frdm_k64f/firmware.elf",
-            "projectEnvName": "frdm_k64f",
+            "executable": "C:/Users/Operador/sem-foros-de-pedestres-e-ve-culos-detran/.pio/build/frdm_kl25z/firmware.elf",
+            "projectEnvName": "frdm_kl25z",
             "toolchainBinDir": "C:/Users/Operador/.platformio/packages/toolchain-gccarmnoneeabi/bin",
             "internalConsoleOptions": "openOnSessionStart",
-            "svdPath": "C:/Users/Operador/.platformio/platforms/freescalekinetis/misc/svd/MK64F12.svd",
+            "svdPath": "C:/Users/Operador/.platformio/platforms/freescalekinetis/misc/svd/MKL25Z4.svd",
             "loadMode": "manual"
         }
     ]
