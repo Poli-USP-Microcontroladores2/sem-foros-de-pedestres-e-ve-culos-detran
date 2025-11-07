@@ -7,14 +7,18 @@
 #define LED_VERDE_NODE DT_ALIAS(led0)  // LED verde
 #define LED_VERMELHO_NODE DT_ALIAS(led2)  // LED vermelho
 
-static const struct gpio_dt_spec ledVerde = GPIO_DT_SPEC_GET(LED_VERDE_NODE, gpios);
-static const struct gpio_dt_spec ledVermelho = GPIO_DT_SPEC_GET(LED_VERMELHO_NODE, gpios);
-
 #define PRIORITY 5
+
+#define SYNC_PIN 12
+#define SYNC_PIN_NODE DT_NODELABEL(gpioa)
 
 #define TEMPO_VERDE_MS 3000   // Thread A dorme
 #define TEMPO_AMARELO_MS 1000   // Thread B dorme
 #define TEMPO_VERMELHO_MS 4000   // Thread C dorme
+
+static const struct gpio_dt_spec ledVerde = GPIO_DT_SPEC_GET(LED_VERDE_NODE, gpios);
+static const struct gpio_dt_spec ledVermelho = GPIO_DT_SPEC_GET(LED_VERMELHO_NODE, gpios);
+static const struct device *sync_port = DEVICE_DT_GET(SYNC_PIN_NODE);
 
 K_SEM_DEFINE(led_amarelo, 0, 1);
 K_SEM_DEFINE(led_verde, 1, 1);
@@ -79,6 +83,10 @@ void main(void)
 
     gpio_pin_configure_dt(&ledVerde, GPIO_OUTPUT_INACTIVE);
     gpio_pin_configure_dt(&ledVermelho, GPIO_OUTPUT_INACTIVE);
+    gpio_pin_configure(sync_port, SYNC_PIN, GPIO_INPUT);
+
+    while(gpio_pin_get(sync_port, SYNC_PIN)==0){
+    }
 
     while (1) {
         k_sleep(K_FOREVER);
