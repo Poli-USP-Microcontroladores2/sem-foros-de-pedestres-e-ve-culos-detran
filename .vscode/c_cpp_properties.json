@@ -1,10 +1,14 @@
+//
+// !!! WARNING !!! AUTO-GENERATED FILE!
+// PLEASE DO NOT MODIFY IT AND USE "platformio.ini":
+// https://docs.platformio.org/page/projectconf/section_env_build.html#build-flags
+//
 {
     "configurations": [
         {
             "name": "PlatformIO",
             "includePath": [
                 "C:/Users/Operador/sem-foros-de-pedestres-e-ve-culos-detran/include",
-                "C:/Users/Operador/sem-foros-de-pedestres-e-ve-culos-detran/src/main.c",
                 "C:/Users/Operador/sem-foros-de-pedestres-e-ve-culos-detran/src",
                 "C:/Users/Operador/sem-foros-de-pedestres-e-ve-culos-detran/.pio/build/frdm_kl25z/zephyr/include/generated/zephyr",
                 "C:/Users/Operador/.platformio/packages/framework-zephyr/include",
@@ -18,8 +22,9 @@
                 "C:/Users/Operador/.platformio/packages/framework-zephyr/_pio/modules/hal/nxp/mcux/mcux-sdk/devices/MKL25Z4",
                 "C:/Users/Operador/.platformio/packages/framework-zephyr/_pio/modules/hal/nxp/mcux/mcux-sdk/devices/MKL25Z4/drivers",
                 "C:/Users/Operador/.platformio/packages/framework-zephyr/_pio/modules/hal/nxp/mcux/mcux-sdk-ng/drivers/common",
+                "C:/Users/Operador/.platformio/packages/framework-zephyr/_pio/modules/hal/nxp/mcux/mcux-sdk-ng/drivers/lpsci",
                 "C:/Users/Operador/.platformio/packages/framework-zephyr/_pio/modules/hal/nxp/mcux/mcux-sdk-ng/drivers/port",
-                "C:/Users/Operador/.pio/build/frdm_kl25z/zephyr/include/generated"
+                ""
             ],
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
@@ -38,6 +43,7 @@
                     "C:/Users/Operador/.platformio/packages/framework-zephyr/_pio/modules/hal/nxp/mcux/mcux-sdk/devices/MKL25Z4",
                     "C:/Users/Operador/.platformio/packages/framework-zephyr/_pio/modules/hal/nxp/mcux/mcux-sdk/devices/MKL25Z4/drivers",
                     "C:/Users/Operador/.platformio/packages/framework-zephyr/_pio/modules/hal/nxp/mcux/mcux-sdk-ng/drivers/common",
+                    "C:/Users/Operador/.platformio/packages/framework-zephyr/_pio/modules/hal/nxp/mcux/mcux-sdk-ng/drivers/lpsci",
                     "C:/Users/Operador/.platformio/packages/framework-zephyr/_pio/modules/hal/nxp/mcux/mcux-sdk-ng/drivers/port",
                     ""
                 ]
