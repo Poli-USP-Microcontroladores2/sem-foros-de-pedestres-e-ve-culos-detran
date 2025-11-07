@@ -11,10 +11,13 @@
 #define BUTTON_NODE1 DT_NODELABEL(user_button_1)
 
 #define PRIORITY 5
+#define PRIORITY_NOTURNO -1
 
 #define TEMPO_VERDE_MS 3000   // Thread A dorme
 #define TEMPO_AMARELO_MS 1000   // Thread B dorme
 #define TEMPO_VERMELHO_MS 4000   // Thread C dorme
+
+#define TEMPO_NOTURNO_MS 1000   // Thread C dorme
 
 static const struct gpio_dt_spec ledVerde = GPIO_DT_SPEC_GET(LED_VERDE_NODE, gpios);
 static const struct gpio_dt_spec ledVermelho = GPIO_DT_SPEC_GET(LED_VERMELHO_NODE, gpios);
@@ -30,6 +33,8 @@ K_SEM_DEFINE(led_vermelho, 0, 1);
 
 K_SEM_DEFINE(sem_interrupcao_pedestre, 0, 1);
 
+K_SEM_DEFINE(sem_noturno, 0, 1);
+
 void button_isr(const struct device *dev, struct gpio_callback *cb, uint32_t pins)
 {
     k_sem_give(&sem_interrupcao_pedestre);
@@ -38,7 +43,6 @@ void button_isr(const struct device *dev, struct gpio_callback *cb, uint32_t pin
 
 void thread_Verde(void *p1, void *p2, void *p3)
 {
-
     while (1) {             
         k_sem_take(&led_verde, K_FOREVER);
 
@@ -86,9 +90,24 @@ void thread_Vermelho(void *p1, void *p2, void *p3)
     }
 }
 
+void thread_Noturno(void *p1, void *p2, void *p3){
+    while(1){
+        gpio_pin_set_dt(&ledVermelho, 1);
+        gpio_pin_set_dt(&ledVerde, 1); 
+
+        k_msleep(TEMPO_NOTURNO_MS);
+
+        gpio_pin_set_dt(&ledVermelho, 0);
+        gpio_pin_set_dt(&ledVerde, 0); 
+
+        k_msleep(TEMPO_NOTURNO_MS);     
+    }
+}
+
 K_THREAD_DEFINE(a_tid, 512, thread_Verde, NULL, NULL, NULL, PRIORITY, 0, 0);
 K_THREAD_DEFINE(b_tid, 512, thread_Amarelo, NULL, NULL, NULL, PRIORITY, 0, 0);
 K_THREAD_DEFINE(c_tid, 512, thread_Vermelho, NULL, NULL, NULL, PRIORITY, 0, 0);
+K_THREAD_DEFINE(d_tid, 512, thread_Noturno, NULL, NULL, NULL, PRIORITY_NOTURNO, 0, 0);
 
 void main(void)
 {
@@ -101,6 +120,8 @@ void main(void)
 
     gpio_pin_configure_dt(&button, GPIO_INPUT | GPIO_PULL_UP);
     gpio_pin_configure_dt(&button1, GPIO_INPUT | GPIO_PULL_UP);
+
+    gpio_pin_configure();
 
     gpio_pin_interrupt_configure_dt(&button, GPIO_INT_EDGE_RISING);
     gpio_init_callback(&button_cb_data, button_isr, BIT(button.pin));
