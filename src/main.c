@@ -7,10 +7,10 @@
 #define LED_VERDE_NODE DT_ALIAS(led0)  // LED verde
 #define LED_VERMELHO_NODE DT_ALIAS(led2)  // LED vermelho
 
-#define PRIORITY 5
+#define BUTTON_NODE DT_NODELABEL(user_button_0)
+#define BUTTON_NODE1 DT_NODELABEL(user_button_1)
 
-#define SYNC_PIN 12
-#define SYNC_PIN_NODE DT_NODELABEL(gpioa)
+#define PRIORITY 5
 
 #define TEMPO_VERDE_MS 3000   // Thread A dorme
 #define TEMPO_AMARELO_MS 1000   // Thread B dorme
@@ -18,20 +18,35 @@
 
 static const struct gpio_dt_spec ledVerde = GPIO_DT_SPEC_GET(LED_VERDE_NODE, gpios);
 static const struct gpio_dt_spec ledVermelho = GPIO_DT_SPEC_GET(LED_VERMELHO_NODE, gpios);
-static const struct device *sync_port = DEVICE_DT_GET(SYNC_PIN_NODE);
+
+static const struct gpio_dt_spec button = GPIO_DT_SPEC_GET(BUTTON_NODE, gpios);
+static const struct gpio_dt_spec button1 = GPIO_DT_SPEC_GET(BUTTON_NODE1, gpios);
+
+static struct gpio_callback button_cb_data;
 
 K_SEM_DEFINE(led_amarelo, 0, 1);
 K_SEM_DEFINE(led_verde, 1, 1);
 K_SEM_DEFINE(led_vermelho, 0, 1);
 
+K_SEM_DEFINE(sem_interrupcao_pedestre, 0, 1);
+
+void button_isr(const struct device *dev, struct gpio_callback *cb, uint32_t pins)
+{
+    k_sem_give(&sem_interrupcao_pedestre);
+    printk("Sinal recebido.");
+}
+
 void thread_Verde(void *p1, void *p2, void *p3)
 {
-    while (1) {
+
+    while (1) {             
         k_sem_take(&led_verde, K_FOREVER);
+
+        k_sem_reset(&sem_interrupcao_pedestre);
         
         gpio_pin_set_dt(&ledVerde, 1);
 
-        k_msleep(TEMPO_VERDE_MS);
+        k_sem_take(&sem_interrupcao_pedestre, K_MSEC(TEMPO_VERDE_MS));
 
         gpio_pin_set_dt(&ledVerde, 0);
 
@@ -83,9 +98,16 @@ void main(void)
 
     gpio_pin_configure_dt(&ledVerde, GPIO_OUTPUT_INACTIVE);
     gpio_pin_configure_dt(&ledVermelho, GPIO_OUTPUT_INACTIVE);
-    gpio_pin_configure(sync_port, SYNC_PIN, GPIO_INPUT);
 
-    while(gpio_pin_get(sync_port, SYNC_PIN)==0){
+    gpio_pin_configure_dt(&button, GPIO_INPUT | GPIO_PULL_UP);
+    gpio_pin_configure_dt(&button1, GPIO_INPUT | GPIO_PULL_UP);
+
+    gpio_pin_interrupt_configure_dt(&button, GPIO_INT_EDGE_RISING);
+    gpio_init_callback(&button_cb_data, button_isr, BIT(button.pin));
+    gpio_add_callback(button.port, &button_cb_data);
+
+    while(gpio_pin_get_dt(&button1)==0){
+        k_busy_wait(300);
     }
 
     while (1) {
