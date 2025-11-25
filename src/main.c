@@ -3,6 +3,7 @@
 #include <zephyr/sys/printk.h>
 #include <zephyr/device.h>
 
+#define modo 0 //modo0==normal; modo1==noturno
 #define priority 3
 #define SYNC_PIN 12
 
@@ -46,22 +47,32 @@ void thread_botao(void *p1, void *p2, void *p3)
 void farol_aberto(void *p1, void *p2, void *p3)
 {
     printk("oi");
-    while (1)
-    {
-        printk("onoff:%d\n", gpio_pin_get(sync_port,SYNC_PIN));
-        k_sem_take(&verde, K_FOREVER);
-        k_sem_reset(&preempt_red);
-        printk("AAAAAAAAAAAAAAAAAAAAAAAAAAA: %d", k_sem_count_get(&preempt_red));
-        gpio_pin_set_dt(&ledVermelho, 0);
-        gpio_pin_set_dt(&ledVerde, 1);
-        k_msleep(SLEEP_TIME_MS);
-        gpio_pin_set_dt(&ledVerde, 0);
-        k_sem_give(&vermelho);
+    if(modo == 0){
+        while (1)
+        {
+            printk("onoff:%d\n", gpio_pin_get(sync_port,SYNC_PIN));
+            k_sem_take(&verde, K_FOREVER);
+            k_sem_reset(&preempt_red);
+            printk("AAAAAAAAAAAAAAAAAAAAAAAAAAA: %d", k_sem_count_get(&preempt_red));
+            gpio_pin_set_dt(&ledVermelho, 0);
+            gpio_pin_set_dt(&ledVerde, 1);
+            k_msleep(SLEEP_TIME_MS);
+            gpio_pin_set_dt(&ledVerde, 0);
+            k_sem_give(&vermelho);
+        }else if(modo == 1){
+            while(1){
+            k_sem_take(&verde, K_FOREVER);
+            gpio_pin_set_dt(&ledVermelho, 0);
+            k_msleep(1000);
+            k_sem_give(&vermelho);
+        }   
+        }
     }
 }
 
 void farol_fechado(void *p1, void *p2, void *p3)
 {
+    if(modo == 0){
     while (1)
     {
         k_sem_take(&vermelho, K_FOREVER);
@@ -91,6 +102,14 @@ void farol_fechado(void *p1, void *p2, void *p3)
         }
         gpio_pin_set_dt(&ledVermelho, 0);
         k_sem_give(&verde);
+    }
+    }else if(modo == 1){
+    while(1){
+    k_sem_take(&vermelho, K_FOREVER);
+    gpio_pin_set_dt(&ledVermelho, 1);
+    k_msleep(1000);
+    k_sem_give(&verde);
+    }
     }
 }
 
