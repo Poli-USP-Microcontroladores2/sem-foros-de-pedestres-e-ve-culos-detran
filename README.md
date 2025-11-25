@@ -9,11 +9,11 @@ Opcionalmente, alunos podem utilizar **IA generativa** para auxiliar na elabora�
 - A atividade deve ser realizada **em duplas**.
 - Cada membro deve contribuir ativamente no desenvolvimento.
 - **Commits no repositório Git** devem ser feitos de forma individual, permitindo a avaliação das contribuições de cada aluno.
-
+  RAFAEL ABRANTES e GUSTAVO FERNANDES
 ## Descrição do Sistema
 O sistema deve controlar semáforos de dois tipos: pedestres e carros, incluindo **modo noturno** e **botão de travessia de pedestres**.
 
-### 1. Semáforo de Pedestres
+### 1. Semáforo de Pedestres (✓)
 - Contém dois LEDs: verde e vermelho.
 - Comportamento:
   - Verde acende por 4 segundos.
@@ -21,7 +21,7 @@ O sistema deve controlar semáforos de dois tipos: pedestres e carros, incluindo
 - Controle deve ser feito por **duas threads independentes**, garantindo exclusão mútua (**mutex**) entre verde e vermelho.
 - Deve ser utilizado o microcontrolador de um integrante.
 
-### 2. Semáforo de Veículos
+### 2. Semáforo de Veículos (✓)
 - Contém três LEDs: verde, amarelo e vermelho.
 - Comportamento:
   - Verde acende por 3 segundos.
@@ -31,12 +31,12 @@ O sistema deve controlar semáforos de dois tipos: pedestres e carros, incluindo
 - Deve ser validado que há **sincronismo** entre o semáforo de pedestres e o semáforo de veículos.
 - Deve ser utilizado o microcontrolador do outro integrante.
 
-### 3. Modo Noturno
+### 3. Modo Noturno (✓)
 - Um modo alternativo em que os semáforos piscam:
   - Carros: amarelo piscando a cada 2 segundos (1 segundo aceso, 1 segundo apagado).
   - Pedestres: vermelho piscando a cada 2 segundos (1 segundo aceso, 1 segundo apagado).
 
-### 4. Botão de Travessia
+### 4. Botão de Travessia (✓)
 - Permite que pedestres acionem o semáforo:
   - Pedestre verde é ativado.
   - Semáforo de carros é bloqueado de forma segura.
