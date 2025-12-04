@@ -31,5 +31,17 @@ Este projeto consiste em um sistema embarcado para controle de tráfego (veícul
 ## ✅ Validação e Testes (Modelo V)
 O código foi validado seguindo rigorosamente o plano de testes:
 1.  **Testes Unitários:** Verificação individual de cada thread/LED.
+
+https://github.com/user-attachments/assets/307e63b0-c2af-4dd9-8df6-60a665680493
+
+
 2.  **Testes de Integração:** Validação da comunicação e sincronia entre os dois semáforos.
+
+https://github.com/user-attachments/assets/0d6b39bf-a534-44bd-8aea-cb7b7056ebda
+
+
 3.  **Testes de Sistema:** Simulação completa dos modos Noturno e Botão de Travessia.
+
+https://github.com/user-attachments/assets/e3d57b77-16b2-4770-85e3-c1b862808234
+
+
