@@ -24,7 +24,7 @@ Este projeto consiste em um sistema embarcado para controle de tráfego (veícul
 * **🔘 Botão de Travessia:** Interrupção externa que fecha o sinal para carros e libera a passagem de pedestres com segurança.
 
 ## 🛠️ Detalhes Técnicos
-* **Arquitetura:** Multithreading com proteção de recursos via Mutex.
+* **Arquitetura:** Multithreading com proteção de recursos via Semáforo.
 * **Hardware:** Sistema distribuído entre dois microcontroladores.
 * **Linguagem:** C / C++ (Ambiente Embarcado).
 
