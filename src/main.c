@@ -59,6 +59,7 @@ void farol_aberto(void *p1, void *p2, void *p3)
             k_msleep(SLEEP_TIME_MS);
             gpio_pin_set_dt(&ledVerde, 0);
             k_sem_give(&vermelho);
+        }
         }else if(modo == 1){
             while(1){
             k_sem_take(&verde, K_FOREVER);
@@ -68,7 +69,7 @@ void farol_aberto(void *p1, void *p2, void *p3)
         }   
         }
     }
-}
+
 
 void farol_fechado(void *p1, void *p2, void *p3)
 {
