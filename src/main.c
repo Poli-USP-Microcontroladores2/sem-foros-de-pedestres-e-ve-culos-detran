@@ -3,170 +3,164 @@
 #include <zephyr/sys/printk.h>
 #include <zephyr/device.h>
 
-// --- Configuração de LEDs via DeviceTree ---
-#define LED_VERDE_NODE DT_ALIAS(led0)    // LED verde
-#define LED_VERMELHO_NODE DT_ALIAS(led2) // LED vermelho
+#define modo 0 // 1 para ativar o modo noturno, 0 para desativar
+#define priority 3
 
-#define BUTTON_NODE DT_NODELABEL(user_button_0)
-<<<<<<< HEAD
+// Pinos de Sincronia e Pedestre
+#define SYNC_PIN 12
+#define SYNC_PIN_2 4
+#define PEDESTRE_PIN 16 // PTA16
+
+/* Tempos */
+#define TEMPO_VERDE  3000
+#define TEMPO_AMARELO 1000
+#define TEMPO_VERMELHO 4000
+
+/* DeviceTree Alias */
+#define LED0_NODE DT_ALIAS(led0)     // Verde
+#define LED0_NODE_ver DT_ALIAS(led2) // Vermelho
+#define GPIO_NODE DT_NODELABEL(gpioa)
 
 #define SYNC_PIN_NODE DT_NODELABEL(gpioa)
 
-#define SYNC_PIN 12
-=======
-#define BUTTON_NODE1 DT_NODELABEL(user_button_1)
->>>>>>> 258eaff12f1adcacb7f018e5f8a1ab3beae2acff
-
-#define PRIORITY 5
-#define PRIORITY_NOTURNO -1
-
-#define TEMPO_VERDE_MS 3000    // Thread A dorme
-#define TEMPO_AMARELO_MS 1000  // Thread B dorme
-#define TEMPO_VERMELHO_MS 4000 // Thread C dorme
-//#define TEMPO_NOTURNO_MS 1000  // Thread D dorme
-
-static const struct gpio_dt_spec ledVerde = GPIO_DT_SPEC_GET(LED_VERDE_NODE, gpios);
-static const struct gpio_dt_spec ledVermelho = GPIO_DT_SPEC_GET(LED_VERMELHO_NODE, gpios);
 static const struct device *sync_port = DEVICE_DT_GET(SYNC_PIN_NODE);
 
-static const struct gpio_dt_spec button = GPIO_DT_SPEC_GET(BUTTON_NODE, gpios);
-static struct gpio_callback button_cb_data;
+static const struct gpio_dt_spec ledVerde = GPIO_DT_SPEC_GET(LED0_NODE, gpios);
+static const struct gpio_dt_spec ledVermelho = GPIO_DT_SPEC_GET(LED0_NODE_ver, gpios);
+static const struct device *gpio_dev = DEVICE_DT_GET(GPIO_NODE);
 
-#define TEMPO_NOTURNO_MS 1000   // Thread C dorme
+// Callback para o botão de pedestre
+static struct gpio_callback pedestre_cb_data;
 
-static const struct gpio_dt_spec ledVerde = GPIO_DT_SPEC_GET(LED_VERDE_NODE, gpios);
-static const struct gpio_dt_spec ledVermelho = GPIO_DT_SPEC_GET(LED_VERMELHO_NODE, gpios);
+// Flag para avisar as threads que o botão foi apertado
+volatile bool pedestre_acionado = false;
 
-static const struct gpio_dt_spec button = GPIO_DT_SPEC_GET(BUTTON_NODE, gpios);
-static const struct gpio_dt_spec button1 = GPIO_DT_SPEC_GET(BUTTON_NODE1, gpios);
+K_SEM_DEFINE(verde, 1, 1);    // Começa com o Verde
+K_SEM_DEFINE(amarelo, 0, 1);
+K_SEM_DEFINE(vermelho, 0, 1);
 
-static struct gpio_callback button_cb_data;
-
-K_SEM_DEFINE(led_amarelo, 0, 1);
-K_SEM_DEFINE(led_verde, 1, 1);
-K_SEM_DEFINE(led_vermelho, 0, 1);
-
-<<<<<<< HEAD
-K_SEM_DEFINE(sem_button, 0, 1);
-
-void button_isr(const struct device *dev, struct gpio_callback *cb, uint32_t pins)
+// --- INTERRUPÇÃO DO PEDESTRE (PTA16) ---
+void pedestre_isr(const struct device *dev, struct gpio_callback *cb, uint32_t pins)
 {
-    k_sem_give(&sem_button);
-=======
-K_SEM_DEFINE(sem_interrupcao_pedestre, 0, 1);
-
-K_SEM_DEFINE(sem_noturno, 0, 1);
-
-void button_isr(const struct device *dev, struct gpio_callback *cb, uint32_t pins)
-{
-    k_sem_give(&sem_interrupcao_pedestre);
-    printk("Sinal recebido.");
->>>>>>> 258eaff12f1adcacb7f018e5f8a1ab3beae2acff
+    // Apenas sinaliza a flag. As threads vão ler isso e abortar seus loops.
+    pedestre_acionado = true;
 }
 
-void thread_Verde(void *p1, void *p2, void *p3)
+// --- THREAD AMARELO (NOVA) ---
+void thread_amarelo(void *p1, void *p2, void *p3)
 {
-<<<<<<< HEAD
     while (1)
     {
-        k_sem_take(&led_verde, K_FOREVER);
-
-=======
-    while (1) {             
-        k_sem_take(&led_verde, K_FOREVER);
-
-        k_sem_reset(&sem_interrupcao_pedestre);
+        k_sem_take(&amarelo, K_FOREVER);
         
->>>>>>> 258eaff12f1adcacb7f018e5f8a1ab3beae2acff
-        gpio_pin_set_dt(&ledVerde, 1);
+        printk("Estado: AMARELO\n");
 
-        k_sem_take(&sem_interrupcao_pedestre, K_MSEC(TEMPO_VERDE_MS));
-
-        gpio_pin_set_dt(&ledVerde, 0);
-
-        k_sem_give(&led_amarelo);
-    }
-}
-
-void thread_Amarelo(void *p1, void *p2, void *p3)
-{
-    while (1)
-    {
-        k_sem_take(&led_amarelo, K_FOREVER);
-
+        // Amarelo = Verde + Vermelho Ligados
         gpio_pin_set_dt(&ledVermelho, 1);
         gpio_pin_set_dt(&ledVerde, 1);
-
-        k_msleep(TEMPO_AMARELO_MS);
-
+        
+        // O amarelo cumpre seu tempo fixo (geralmente não é interrompido)
+        k_msleep(TEMPO_AMARELO); 
+        
         gpio_pin_set_dt(&ledVermelho, 0);
         gpio_pin_set_dt(&ledVerde, 0);
 
-        k_sem_give(&led_vermelho);
+        // Limpa a flag de pedestre, pois já atendemos o pedido (passamos pelo amarelo)
+        pedestre_acionado = false;
+
+        // Depois do amarelo, sempre vai para o vermelho
+        k_sem_give(&vermelho);
     }
 }
 
-void thread_Vermelho(void *p1, void *p2, void *p3)
+// --- THREAD VERDE ---
+void farol_aberto(void *p1, void *p2, void *p3)
 {
     while (1)
     {
-        k_sem_take(&led_vermelho, K_FOREVER);
-
-        gpio_pin_set_dt(&ledVermelho, 1);
-
-        k_msleep(TEMPO_VERMELHO_MS);
+        k_sem_take(&verde, K_FOREVER);
+        printk("Estado: VERDE\n");
 
         gpio_pin_set_dt(&ledVermelho, 0);
+        gpio_pin_set_dt(&ledVerde, 1);
 
-        k_sem_give(&led_verde);
-    }
-}
-
-<<<<<<< HEAD
-void thread_Button(void *p1, void *p2, void *p3)
-{
-    if(gpio_pin_get(sync_port, SYNC_PIN)){
-        while (1)
+        // Loop fracionado para permitir interrupção rápida
+        // 40 x 100ms = 4000ms (4 segundos)
+        for (int i = 0; i < (TEMPO_VERDE / 100); i++)
         {
-            k_sem_take(&sem_button, K_FOREVER);
-
-            gpio_pin_set_dt(&ledVermelho, 1);
-            gpio_pin_set_dt(&ledVerde, 1);
-
-            k_msleep(TEMPO_AMARELO_MS);
-
-            gpio_pin_set_dt(&ledVermelho, 0);
-            gpio_pin_set_dt(&ledVerde, 0);
-
-            k_sem_give(&sem_button);
+            if (pedestre_acionado) {
+                printk("Verde Interrompido pelo Pedestre!\n");
+                break; // Sai do loop 'for' imediatamente
+            }
+            k_msleep(100);
         }
-=======
-void thread_Noturno(void *p1, void *p2, void *p3){
-    while(1){
-        gpio_pin_set_dt(&ledVermelho, 1);
-        gpio_pin_set_dt(&ledVerde, 1); 
 
-        k_msleep(TEMPO_NOTURNO_MS);
-
-        gpio_pin_set_dt(&ledVermelho, 0);
-        gpio_pin_set_dt(&ledVerde, 0); 
-
-        k_msleep(TEMPO_NOTURNO_MS);     
->>>>>>> 258eaff12f1adcacb7f018e5f8a1ab3beae2acff
+        gpio_pin_set_dt(&ledVerde, 0);
+        
+        // Do verde, vai para o Amarelo
+        k_sem_give(&amarelo);
     }
 }
 
-K_THREAD_DEFINE(a_tid, 512, thread_Verde, NULL, NULL, NULL, PRIORITY, 0, 0);
-K_THREAD_DEFINE(b_tid, 512, thread_Amarelo, NULL, NULL, NULL, PRIORITY, 0, 0);
-K_THREAD_DEFINE(c_tid, 512, thread_Vermelho, NULL, NULL, NULL, PRIORITY, 0, 0);
-<<<<<<< HEAD
-K_THREAD_DEFINE(d_tid, 512, thread_Button, NULL, NULL, NULL, PRIORITY, 0, 0);
-=======
-K_THREAD_DEFINE(d_tid, 512, thread_Noturno, NULL, NULL, NULL, PRIORITY_NOTURNO, 0, 0);
->>>>>>> 258eaff12f1adcacb7f018e5f8a1ab3beae2acff
+// --- THREAD VERMELHO ---
+void farol_fechado(void *p1, void *p2, void *p3)
+{
+    while (1)
+    {
+        k_sem_take(&vermelho, K_FOREVER);
+        printk("Estado: VERMELHO\n");
+
+        gpio_pin_set_dt(&ledVerde, 0);
+        gpio_pin_set_dt(&ledVermelho, 1);
+
+        // Loop fracionado para permitir interrupção
+        for (int i = 0; i < (TEMPO_VERMELHO / 100); i++)
+        {
+            if (pedestre_acionado) {
+                printk("Vermelho Interrompido pelo Pedestre!\n");
+                break; 
+            }
+            k_msleep(100);
+        }
+
+        gpio_pin_set_dt(&ledVermelho, 0);
+
+        // Se foi interrompido pelo pedestre, vai para Amarelo (conforme seu pedido "troque para thread amarelo")
+        // Se foi ciclo normal, vai para Verde.
+        if (pedestre_acionado) {
+            k_sem_give(&amarelo);
+        } else {
+            k_sem_give(&verde);
+        }
+    }
+}
+
+void modus_nocturnus(void *p1, void *p2, void *p3){
+    if(modo == 1){
+        // Trava os semáforos normais para não interferirem
+        k_sem_take(&verde, K_NO_WAIT);
+        k_sem_take(&vermelho, K_NO_WAIT);
+        k_sem_take(&amarelo, K_NO_WAIT);
+        
+        while (1){
+            gpio_pin_set_dt(&ledVermelho, 1); // Pisca vermelho (ou amarelo se ligar o verde junto)
+            k_msleep(1000);
+            gpio_pin_set_dt(&ledVermelho, 0);
+            k_msleep(1000);
+        }
+    }
+}
+
+// Definição das Threads
+K_THREAD_DEFINE(mn, 512, modus_nocturnus, NULL, NULL, NULL, -1, 0, 0);
+K_THREAD_DEFINE(t_verde, 512, farol_aberto, NULL, NULL, NULL, priority, 0, 0);
+K_THREAD_DEFINE(t_amarelo, 512, thread_amarelo, NULL, NULL, NULL, priority, 0, 0); 
+K_THREAD_DEFINE(t_vermelho, 512, farol_fechado, NULL, NULL, NULL, priority, 0, 0);
 
 void main(void)
 {
+    printk("Iniciando sistema...\n");
+
     if (!device_is_ready(ledVerde.port) || !device_is_ready(ledVermelho.port))
     {
         return;
@@ -174,29 +168,33 @@ void main(void)
 
     gpio_pin_configure_dt(&ledVerde, GPIO_OUTPUT_INACTIVE);
     gpio_pin_configure_dt(&ledVermelho, GPIO_OUTPUT_INACTIVE);
-    gpio_pin_configure(sync_port, SYNC_PIN, GPIO_INPUT);
 
-<<<<<<< HEAD
-    while(!gpio_pin_get(sync_port, SYNC_PIN)){}
+    // Configuração dos pinos de sincronia originais
+    gpio_pin_configure(gpio_dev, SYNC_PIN, GPIO_OUTPUT_HIGH);
+    gpio_pin_configure(gpio_dev, SYNC_PIN_2, GPIO_INPUT);
+    gpio_pin_set(gpio_dev, SYNC_PIN, 0);
 
+    // --- CONFIGURAÇÃO DO BOTÃO PEDESTRE (PTA16) ---
+    // Configura PTA16 como Entrada com Pull-Up
+    gpio_pin_configure(gpio_dev, PEDESTRE_PIN, GPIO_INPUT | GPIO_PULL_UP);
+    
+    // Configura interrupção na borda de descida (quando encostar no GND)
+    gpio_pin_interrupt_configure(gpio_dev, PEDESTRE_PIN, GPIO_INT_EDGE_FALLING);
+    
+    // Inicializa callback
+    gpio_init_callback(&pedestre_cb_data, pedestre_isr, BIT(PEDESTRE_PIN));
+    gpio_add_callback(gpio_dev, &pedestre_cb_data);
+    // ----------------------------------------------
+
+    printk("Sistema Pronto.\n");
+    gpio_pin_set(gpio_dev, SYNC_PIN, 1);
+
+    while (gpio_pin_get(sync_port, SYNC_PIN))
+    {
+    }
+    
     while (1)
     {
-=======
-    gpio_pin_configure_dt(&button, GPIO_INPUT | GPIO_PULL_UP);
-    gpio_pin_configure_dt(&button1, GPIO_INPUT | GPIO_PULL_UP);
-
-    gpio_pin_configure();
-
-    gpio_pin_interrupt_configure_dt(&button, GPIO_INT_EDGE_RISING);
-    gpio_init_callback(&button_cb_data, button_isr, BIT(button.pin));
-    gpio_add_callback(button.port, &button_cb_data);
-
-    while(gpio_pin_get_dt(&button1)==0){
-        k_busy_wait(300);
-    }
-
-    while (1) {
->>>>>>> 258eaff12f1adcacb7f018e5f8a1ab3beae2acff
         k_sleep(K_FOREVER);
     }
 }
