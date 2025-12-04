@@ -3,6 +3,7 @@
 #include <zephyr/sys/printk.h>
 #include <zephyr/device.h>
 
+#define modo 0 // 1 para ativar o modo noturno, 0 para desativar
 #define priority 3
 #define SYNC_PIN 12
 #define SYNC_PIN_2 4
@@ -97,8 +98,8 @@ void farol_fechado(void *p1, void *p2, void *p3)
 }
 
 void modus_nocturnus(void *p1, void *p2, void *p3){
+    if(modo == 1){
     while (1){
-        if(gpio_pin_get(sync_port, SYNC_PIN_2) == 0){
             k_sem_take(&verde,K_NO_WAIT);
             k_sem_take(&vermelho,K_NO_WAIT);
             
@@ -106,11 +107,8 @@ void modus_nocturnus(void *p1, void *p2, void *p3){
             k_msleep(1000);
             gpio_pin_set_dt(&ledVermelho, 0);
             k_msleep(1000);
-        }else{
-            k_sem_give(&vermelho);
-            k_msleep(100);
-        }
     }
+}
 }
 
 K_THREAD_DEFINE(mn, 512, modus_nocturnus, NULL, NULL, NULL, -1, 0, 0);
