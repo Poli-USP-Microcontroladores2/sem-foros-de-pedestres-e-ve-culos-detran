@@ -1,11 +1,9 @@
-# Sistema de Semáforos Inteligentes 🚦
-**Disciplina:** PSI-Microcontroladores II (Aula 07)
 **Alunos:** Rafael Abrantes e Gustavo Fernandes
 
 ---
 
 ## 📋 Sobre o Projeto
-Este projeto consiste em um sistema embarcado para controle de tráfego (veículos e pedestres) utilizando **RTOS (Threads e Mutex)**. O objetivo principal foi garantir a sincronização entre dois microcontroladores e a exclusão mútua no acionamento dos LEDs, validando tudo através do **Modelo V de testes**.
+Este projeto consiste em um sistema embarcado para controle de tráfego (veículos e pedestres) utilizando **RTOS (Threads e Mutex)**. O objetivo principal foi garantir a sincronização entre dois microcontroladores, validando tudo através do **Modelo V de testes**.
 
 ## ⚙️ Funcionalidades Implementadas
 
@@ -17,19 +15,19 @@ Este projeto consiste em um sistema embarcado para controle de tráfego (veícul
 ### 2. Semáforo de Pedestres (2 LEDs)
 * **Controle:** 2 Threads independentes (Verde, Vermelho).
 * **Ciclo:** Verde (4s) -> Vermelho (4s).
-* **Segurança:** Uso de Mutex para impedir acionamento simultâneo indevido.
+* **Segurança:** Uso de semáforo para impedir acionamento simultâneo indevido.
 
 ### 3. Modos Especiais
 * **🌙 Modo Noturno:** LEDs piscam de forma intermitente (Amarelo para carros, Vermelho para pedestres) a cada 2 segundos.
 * **🔘 Botão de Travessia:** Interrupção externa que fecha o sinal para carros e libera a passagem de pedestres com segurança.
 
 ## 🛠️ Detalhes Técnicos
-* **Arquitetura:** Multithreading com proteção de recursos via Semáforo.
+* **Arquitetura:** Threads com proteção de recursos via Semáforo.
 * **Hardware:** Sistema distribuído entre dois microcontroladores.
-* **Linguagem:** C / C++ (Ambiente Embarcado).
+* **Linguagem:** C (Ambiente Embarcado).
 
 ## ✅ Validação e Testes (Modelo V)
-O código foi validado seguindo rigorosamente o plano de testes:
+O código foi validado seguindo o plano de testes:
 1.  **Testes Unitários:** Verificação individual de cada thread/LED.
 
 https://github.com/user-attachments/assets/307e63b0-c2af-4dd9-8df6-60a665680493
